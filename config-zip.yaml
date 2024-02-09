@@ -1,0 +1,160 @@
+id: zip-config-files
+
+info:
+  name: Compressed Backup File - Detect
+  author: bugspiderlee
+  severity: high
+  description: Multiple compressed backup files were detected.
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N
+    cvss-score: 5.3
+    cwe-id: CWE-200
+  metadata:
+    max-request: 1440
+  tags: exposure,backup
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/{{FILENAME}}.{{EXT}}"
+
+    attack: clusterbomb
+    payloads:
+      FILENAME:
+        - "{{FQDN}}" # www.example.com
+        - "{{RDN}}" # example.com
+        - "{{DN}}" # example
+        - "{{SD}}" # www
+        - "{{date_time('%Y')}}" # 2023
+        - "ROOT" # tomcat
+        - "config"
+        - "settings"
+        - "msql"
+        - "configuration"
+        - "proxy"
+        - "backend"
+        - "wallet"
+        - "database"
+
+      EXT:
+        - "zip"
+        - "7z"
+        - "ashx.zip"
+        - "aspx.zip"
+        - "asp.zip"
+        - "atom.zip"
+        - "backup.zip"
+        - "bak.zip"
+        - "bz2"
+        - "cfc.zip"
+        - "cfg.zip"
+        - "cfm.zip"
+        - "cgi.zip"
+        - "class.zip"
+        - "conf.zip"
+        - "css.zip"
+        - "csv.zip"
+        - "db"
+        - "docx.zip"
+        - "doc.zip"
+        - "ear.zip"
+        - "gz"
+        - "htaccess.zip"
+        - "html.zip"
+        - "htm.zip"
+        - "ini.zip"
+        - "jar"
+        - "java.zip"
+        - "jsonld.zip"
+        - "jsonp.zip"
+        - "json.zip"
+        - "jspx.zip"
+        - "jsp.zip"
+        - "js.zip"
+        - "less.zip"
+        - "log.zip"
+        - "lz"
+        - "markdown.zip"
+        - "md.zip"
+        - "mjs.zip"
+        - "pdf.zip"
+        - "php.zip"
+        - "pl.zip"
+        - "pptx.zip"
+        - "ppt.zip"
+        - "pyc.zip"
+        - "pyo.zip"
+        - "py.zip"
+        - "rar"
+        - "rb.zip"
+        - "rss.zip"
+        - "rst.zip"
+        - "rtf.zip"
+        - "sass.zip"
+        - "scss.zip"
+        - "shtml.zip"
+        - "sql.7z"
+        - "sql.bz2"
+        - "sql.gz"
+        - "sqlite"
+        - "sqlitedb"
+        - "sql.lz"
+        - "sql.rar"
+        - "sql.tar.gz"
+        - "sql.tar.z"
+        - "sql.xz"
+        - "sql.z"
+        - "sql.zip"
+        - "tar"
+        - "tar.bz2"
+        - "tar.gz"
+        - "tar.z"
+        - "tgz"
+        - "txt.zip"
+        - "war"
+        - "war.zip"
+        - "xhtml.zip"
+        - "xlsx.zip"
+        - "xls.zip"
+        - "xml.zip"
+        - "xsd.zip"
+        - "xslt.zip"
+        - "xsl.zip"
+        - "xz"
+        - "yaml.zip"
+        - "yml.zip"
+        - "old.zip"
+        - "z"
+        - "Z"
+        
+    max-size: 500 # Size in bytes - Max Size to read from server response
+
+    matchers-condition: and
+    matchers:
+      - type: binary
+        binary:
+          - "7573746172202000" # tar
+          - "7573746172003030" # tar
+          - "377ABCAF271C" # 7z
+          - "314159265359" # bz2
+          - "53514c69746520666f726d6174203300" # SQLite format 3.
+          - "1f8b" # gz tar.gz
+          - "526172211A0700" # rar RAR archive version 1.50
+          - "526172211A070100" # rar RAR archive version 5.0
+          - "FD377A585A0000" # xz tar.xz
+          - "1F9D" # z tar.z
+          - "1FA0" # z tar.z
+          - "4C5A4950" # lz
+          - "504B0304" # zip
+        condition: or
+        part: body
+
+      - type: regex
+        regex:
+          - "application/[-\\w.]+"
+        part: header
+
+      - type: status
+        status:
+          - 200
+# digest: 4a0a00473045022100d7a028dbd5f7ea1cf187e1871d5065d2cd4d6ef130b04b73088820d6072435f50220673ba2cf4b143fa0d6b4b9b18d0d6290d902f76df58c73c764f7a99ccc1c671f:922c64590222798bb761d5b6d8e72950
