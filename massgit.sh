@@ -23,8 +23,17 @@ process_domains_from_file() {
     done < "$file_path"
 }
 
-# Replace 'your_input_file.txt' with the path to your text file containing domains
-input_file_path='./1.txt'
+# Check if the wordlist file is provided as a command-line argument
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <wordlist_file>"
+    exit 1
+fi
+
+# Check if the provided file exists
+if [ ! -f "$1" ]; then
+    echo "File not found: $1"
+    exit 1
+fi
 
 # Process domains from the file
-process_domains_from_file "$input_file_path"
+process_domains_from_file "$1"
